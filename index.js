@@ -39,75 +39,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var child_process_1 = require("child_process");
-var commant_1 = require("./commant");
 var server_1 = __importDefault(require("./server"));
-var PROJECT_PATH = "/Users/yidoon/Desktop/shifang/crm-fe";
-var EXCLUDE_BRANCHS = ["master", "dev", "stage", "uat", "develop"];
-var CURRENT_BRANCH = "";
-var getBranchLatesCommit = function (branch) {
-    var cmdStr = "git log " + branch + " --oneline --date=relative --pretty=format:\"%h_%ad_%s\" | head -n 1";
-    return new Promise(function (resolve, reject) {
-        child_process_1.exec(cmdStr, function (err, stdout, stderr) {
-            var arr = stdout.split("_");
-            var obj = {
-                hash: arr[0].trim(),
-                date: arr[1].split("\n")[0],
-                branch: branch,
-                subject: arr[2].trim(),
-            };
-            if (!err) {
-                resolve(obj);
-            }
-            else {
-                reject(err);
-            }
-        });
-    });
-};
-var generateBranchList = function () {
-    return new Promise(function (resolve, reject) {
-        child_process_1.exec(commant_1.LIST_LOCAL_BRANCHS, {}, function (err, stdout, stderr) { return __awaiter(void 0, void 0, void 0, function () {
-            var branchList, tempArr, tempRes, i, len;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (err) {
-                            return [2 /*return*/, reject(err)];
-                        }
-                        branchList = stdout.split("\n").map(function (name) {
-                            return name.trim();
-                        });
-                        branchList = branchList.filter(function (name) {
-                            if (name.indexOf("*") > -1) {
-                                CURRENT_BRANCH = name.replace("*", "").trim();
-                            }
-                            return name && !EXCLUDE_BRANCHS.includes(name) && name.indexOf("*") < 0;
-                        });
-                        tempArr = [];
-                        i = 0, len = branchList.length;
-                        _a.label = 1;
-                    case 1:
-                        if (!(i < len)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, getBranchLatesCommit(branchList[i])];
-                    case 2:
-                        tempRes = _a.sent();
-                        tempArr.push(tempRes);
-                        _a.label = 3;
-                    case 3:
-                        i++;
-                        return [3 /*break*/, 1];
-                    case 4:
-                        resolve(tempArr);
-                        return [2 /*return*/];
-                }
-            });
-        }); });
-    });
-};
 var init = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        // chdir(PROJECT_PATH);
         server_1.default();
         return [2 /*return*/];
     });
