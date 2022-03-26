@@ -1,5 +1,5 @@
 import { exec } from "child_process";
-import { LIST_LOCAL_BRANCHS } from "../commad";
+import { LIST_LOCAL_BRANCHS } from "./command";
 const EXCLUDE_BRANCHS = ["master", "dev", "stage", "uat", "develop"];
 let CURRENT_BRANCH = "";
 

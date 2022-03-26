@@ -1,6 +1,6 @@
 import http from "http";
 import fs from "fs";
-import generateBranchList from "./src/branch";
+import generateBranchList from "./branch";
 import { chdir } from "process";
 
 const PROJECT_PATH = "/Users/yidoon/Desktop/shifang/crm-fe";
@@ -20,7 +20,6 @@ const createServer = () => {
     }
     if (req.url === "/") {
       fs.readFile("index.html", (err, data) => {
-        console.log(data, "ddd");
         chdir(PROJECT_PATH);
         res.statusCode = 200;
         res.setHeader("Content-Type", "text/html");

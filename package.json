@@ -1,14 +1,16 @@
 {
   "devDependencies": {
     "@types/node": "^17.0.21",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.7.0"
   },
   "name": "clear-branch",
   "version": "1.0.0",
   "description": "clear git branch",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon"
   },
   "keywords": [
     "git",
