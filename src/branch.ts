@@ -3,10 +3,11 @@ import { LIST_LOCAL_BRANCHS } from "./command";
 const EXCLUDE_BRANCHS = ["master", "dev", "stage", "uat", "develop"];
 let CURRENT_BRANCH = "";
 
-const getBranchLatesCommit = (branch: string) => {
+const getBranchLatesCommit = (branch: string, path?: string) => {
   const cmdStr = `git log ${branch} --oneline --date=relative --pretty=format:"%h_%ad_%s" | head -n 1`;
+
   return new Promise((resolve, reject) => {
-    exec(cmdStr, (err, stdout, stderr) => {
+    exec(cmdStr, { cwd: path }, (err, stdout, stderr) => {
       const arr = stdout.split("_");
       const obj = {
         hash: arr[0].trim(),
@@ -22,9 +23,9 @@ const getBranchLatesCommit = (branch: string) => {
     });
   });
 };
-const generateBranchList = () => {
+const generateBranchList = (path?: string) => {
   return new Promise((resolve, reject) => {
-    exec(LIST_LOCAL_BRANCHS, {}, async (err, stdout, stderr) => {
+    exec(LIST_LOCAL_BRANCHS, { cwd: path }, async (err, stdout, stderr) => {
       if (err) {
         return reject(err);
       }
@@ -40,10 +41,23 @@ const generateBranchList = () => {
       const tempArr = [];
       let tempRes;
       for (let i = 0, len = branchList.length; i < len; i++) {
-        tempRes = await getBranchLatesCommit(branchList[i]);
-        tempArr.push(tempRes);
+        if (branchList[i]) {
+          tempRes = await getBranchLatesCommit(branchList[i]);
+          tempArr.push(tempRes);
+        }
       }
       resolve(tempArr);
+    });
+  });
+};
+export const deleteBranchs = (branch: string[]) => {
+  const cmdStr = `git branch -D ${branch.join(" ")}`;
+  return new Promise((resolve, reject) => {
+    exec(cmdStr, (err, stdout, stderr) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(stdout);
     });
   });
 };

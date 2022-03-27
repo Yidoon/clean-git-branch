@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@types/node": "^17.0.21",
+    "@types/node-static": "^0.7.7",
     "nodemon": "^2.0.15",
     "ts-node": "^10.7.0"
   },
@@ -17,5 +18,8 @@
     "clear-branch"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "node-static": "^0.7.11"
+  }
 }

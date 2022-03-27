@@ -1,0 +1,26 @@
+.header {
+  text-align: center;
+}
+.content-wrap {
+  display: flex;
+}
+.branch-container {
+  flex: 1;
+}
+.branch-list-wrap {
+}
+.branch-item {
+  margin: 10px;
+}
+.branch-operator-container {
+  width: 400px;
+  background-color: #eeeeee;
+  height: 100vh;
+}
+.btn-delete {
+  margin-left: 24px;
+  cursor: pointer;
+}
+.branch-item-text {
+  margin-left: 16px;
+}

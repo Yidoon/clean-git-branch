@@ -1,30 +1,86 @@
 import http from "http";
+import url from "url";
 import fs from "fs";
-import generateBranchList from "./branch";
+import generateBranchList, { deleteBranchs } from "./branch";
 import { chdir } from "process";
+import path from "path";
+import { Server } from "node-static";
+import { parse } from "querystring";
 
+const fileServer = new Server(path.join(__dirname, "../public"));
 const PROJECT_PATH = "/Users/yidoon/Desktop/shifang/crm-fe";
 
 const createServer = () => {
   const server = http.createServer(async (req, res) => {
+    if (req.url === "/") {
+      req
+        .addListener("end", function () {
+          fileServer.serve(req, res);
+        })
+        .resume();
+    }
     if (req.url === "/close") {
       process.exit();
     }
     if (req.url === "/branchs") {
+      chdir(PROJECT_PATH);
       const branchs = await generateBranchList();
       res.writeHead(200, {
         "Content-Type": "application/json",
       });
-      res.write(JSON.stringify(branchs));
+      const data = {
+        code: 0,
+        msg: "",
+        data: branchs,
+      };
+      res.write(JSON.stringify(data));
       res.end();
     }
-    if (req.url === "/") {
-      fs.readFile("index.html", (err, data) => {
-        chdir(PROJECT_PATH);
+    if (req.url!.match(".css$")) {
+      // const htmlPath = path.join(__dirname, "../public/index.html");
+      const cssPath = path.join(__dirname, "../public", req.url!);
+      fs.readFile(cssPath, (err, data) => {
         res.statusCode = 200;
-        res.setHeader("Content-Type", "text/html");
+        res.setHeader("Content-Type", "text/css");
         res.write(data);
         res.end();
+      });
+    }
+    if (req.url === "/branchs/delete" && req.method === "POST") {
+      let body = "";
+      req.on("data", (chunk) => {
+        body = chunk.toString();
+      });
+      req.on("end", async () => {
+        const payload = JSON.parse(body);
+        chdir(PROJECT_PATH);
+
+        if (payload.branchs) {
+          try {
+            await deleteBranchs(payload.branchs as string[]);
+            res.writeHead(200, {
+              "Content-Type": "application/json",
+            });
+            const data = {
+              code: 0,
+              msg: "",
+              data: "",
+            };
+            res.write(JSON.stringify(data));
+            res.end();
+          } catch (error) {
+            res.writeHead(200, {
+              "Content-Type": "application/json",
+            });
+            const data = {
+              code: 0,
+              msg: error,
+              data: "",
+            };
+            res.write(JSON.stringify(data));
+            res.end();
+          }
+        }
       });
     }
   });

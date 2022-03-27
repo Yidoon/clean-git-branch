@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./index.css"></link>
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="header"><h1>Clear git branch</h1></div>
+    <div class="content-wrap">
+      <div class="branch-container">
+        <ul id="branch-list-wrap">
+        </ul>
+      </div>
+      <div class="branch-operator-container">
+        <button id="batch-delete">将选中的分支删除</button>
+      </div>
+    </div>
+    <script>
+      let branchList = []
+      const checkedBranchList = []
+      const handleDeleteBranch = () => {
+        const checkboxEls = document.getElementsByClassName('branch-item-checkbox')
+        for(let i = 0, len = checkboxEls.length; i < len; i++) {
+          if(checkboxEls[i].checked) {
+            checkedBranchList.push(checkboxEls[i].getAttribute('data-branch'))
+          }
+        }
+        fetch("http://localhost:8080/branchs/delete", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            branchs: checkedBranchList
+          })
+        })
+        .then(async (res) => {
+          getBranchList()
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      }
+      const handleDelete = () => {
+
+      }
+      const bindEvent = () => {
+        const batchDeleteBtn = document.getElementById('batch-delete')
+        console.log(batchDeleteBtn, 'batchDeleteBtn')
+        batchDeleteBtn.addEventListener('click', handleDeleteBranch)
+      }
+      const createNode = (branchObj) => {
+        const text = `${branchObj.hash} - ${branchObj.date} - ${branchObj.subject}`
+        const li = document.createElement('li')
+        li.setAttribute('data-hash', branchObj.hash)
+        li.classList.add('branch-item')
+        const span = document.createElement('span')
+        span.classList.add('branch-item-text')
+        const button = document.createElement('button')
+        const input = document.createElement('input')
+        input.setAttribute('data-branch', branchObj.branch)
+        input.classList.add('branch-item-checkbox')
+        input.type = 'checkbox'
+        button.innerText = 'Delete'
+        button.classList.add('btn-delete')
+        button.addEventListener('click', () => {
+          const li = button.parentNode
+          const hash = li.getAttribute('data-hash')
+          const index = branchList.findIndex(item => item.hash === hash)
+          branchList.splice(index, 1)
+          li.remove()
+        })
+        span.innerText = text
+        li.appendChild(input)
+        li.appendChild(span)
+        li.appendChild(button)
+        return li
+      }
+      const renderBranch = () => {
+        const branchWrapEl = document.getElementById('branch-list-wrap')
+        branchWrapEl.innerHTML = ''
+        let tempEl
+        let text
+        console.log(branchWrapEl, 'branchWrapEl');
+        console.log(branchList, 'branchList')
+        for (let i = 0, len = branchList.length; i < len; i++) {
+          tempNode = createNode(branchList[i])
+          branchWrapEl.appendChild(tempNode)
+        }
+      }
+      const getBranchList = () => {
+        fetch("http://localhost:8080/branchs")
+        .then(async (res) => {
+          const data = await res.json()
+          branchList = data.data
+          renderBranch()
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      }
+      const init = () => {
+        getBranchList()
+        bindEvent()
+      }
+      init()
+    </script>
+  </body>
+</html>
