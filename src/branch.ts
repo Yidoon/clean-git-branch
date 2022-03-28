@@ -2,16 +2,18 @@ import { exec } from "child_process";
 import { LIST_LOCAL_BRANCHS } from "./command";
 const EXCLUDE_BRANCHS = ["master", "dev", "stage", "uat", "develop"];
 let CURRENT_BRANCH = "";
+const SPLITE_CHARACTER = "_cgb_";
 
 const getBranchLatesCommit = (branch: string, path?: string) => {
-  const cmdStr = `git log ${branch} --oneline --date=relative --pretty=format:"%h_%ad_%s" | head -n 1`;
+  const cmdStr = `git log ${branch} --oneline --date=relative --pretty=format:"%h%${SPLITE_CHARACTER}%ad${SPLITE_CHARACTER}%s${SPLITE_CHARACTER}%ct" | head -n 1`;
 
   return new Promise((resolve, reject) => {
     exec(cmdStr, { cwd: path }, (err, stdout, stderr) => {
-      const arr = stdout.split("_");
+      const arr = stdout.split("_cgb_");
       const obj = {
         hash: arr[0].trim(),
         date: arr[1].split("\n")[0],
+        date_unix: Number(arr[3].split("\n")[0]),
         branch: branch,
         subject: arr[2].trim(),
       };
@@ -38,7 +40,7 @@ const generateBranchList = (path?: string) => {
         }
         return name && !EXCLUDE_BRANCHS.includes(name) && name.indexOf("*") < 0;
       });
-      const tempArr = [];
+      const tempArr: any[] = [];
       let tempRes;
       for (let i = 0, len = branchList.length; i < len; i++) {
         if (branchList[i]) {
@@ -46,6 +48,7 @@ const generateBranchList = (path?: string) => {
           tempArr.push(tempRes);
         }
       }
+      tempArr.sort((a, b) => a.date_unix - b.date_unix);
       resolve(tempArr);
     });
   });

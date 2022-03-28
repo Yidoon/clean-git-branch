@@ -21,6 +21,24 @@
     <script>
       let branchList = []
       const checkedBranchList = []
+      const reqDeleteBranchs = (branchs) => {
+        fetch("http://localhost:8080/branchs/delete", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            branchs: branchs
+          })
+        })
+        .then(async (res) => {
+          getBranchList()
+          checkedBranchList = []
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      }
       const handleDeleteBranch = () => {
         const checkboxEls = document.getElementsByClassName('branch-item-checkbox')
         for(let i = 0, len = checkboxEls.length; i < len; i++) {
@@ -28,24 +46,12 @@
             checkedBranchList.push(checkboxEls[i].getAttribute('data-branch'))
           }
         }
-        fetch("http://localhost:8080/branchs/delete", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            branchs: checkedBranchList
-          })
-        })
-        .then(async (res) => {
-          getBranchList()
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+        reqDeleteBranchs(checkedBranchList)
       }
-      const handleDelete = () => {
-
+      const handleDelete = (e) => {
+        const target = e.target
+        const branch = target.getAttribute('data-branch')
+        reqDeleteBranchs([branch])
       }
       const bindEvent = () => {
         const batchDeleteBtn = document.getElementById('batch-delete')
@@ -62,10 +68,12 @@
         const button = document.createElement('button')
         const input = document.createElement('input')
         input.setAttribute('data-branch', branchObj.branch)
+        input.setAttribute('id', branchObj.branch)
         input.classList.add('branch-item-checkbox')
         input.type = 'checkbox'
         button.innerText = 'Delete'
         button.classList.add('btn-delete')
+        button.setAttribute('data-branch', branchObj.branch)
         button.addEventListener('click', () => {
           const li = button.parentNode
           const hash = li.getAttribute('data-hash')
