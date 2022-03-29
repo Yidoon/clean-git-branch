@@ -74,13 +74,7 @@
         button.innerText = 'Delete'
         button.classList.add('btn-delete')
         button.setAttribute('data-branch', branchObj.branch)
-        button.addEventListener('click', () => {
-          const li = button.parentNode
-          const hash = li.getAttribute('data-hash')
-          const index = branchList.findIndex(item => item.hash === hash)
-          branchList.splice(index, 1)
-          li.remove()
-        })
+        button.addEventListener('click', handleDelete)
         span.innerText = text
         li.appendChild(input)
         li.appendChild(span)
