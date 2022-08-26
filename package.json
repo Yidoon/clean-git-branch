@@ -1,0 +1,19 @@
+{
+  "name": "clean-git-branch",
+  "version": "1.0.0",
+  "description": "clean git branch",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yidoon/clean-git-branch.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yidoon/clean-git-branch/issues"
+  },
+  "homepage": "https://github.com/Yidoon/clean-git-branch#readme"
+}
