@@ -8,7 +8,8 @@ import { Server } from "node-static";
 import { parse } from "querystring";
 
 const fileServer = new Server(path.join(__dirname, "../public"));
-const PROJECT_PATH = "/Users/yidoon/Desktop/shifang/crm-fe";
+// const PROJECT_PATH = "/Users/yidoon/Desktop/shifang/crm-fe";
+const PROJECT_PATH = "/Users/abc/Desktop/Project/crm-fe";
 
 const createServer = () => {
   const server = http.createServer(async (req, res) => {
@@ -36,12 +37,13 @@ const createServer = () => {
       res.write(JSON.stringify(data));
       res.end();
     }
-    if (req.url!.match(".css$")) {
+    if (req.url!.match(".css$") || req.url!.match(".js$")) {
       // const htmlPath = path.join(__dirname, "../public/index.html");
       const cssPath = path.join(__dirname, "../public", req.url!);
+      const mindType = req.url!.match(".css$") ? "text/css" : "text/javascript";
       fs.readFile(cssPath, (err, data) => {
         res.statusCode = 200;
-        res.setHeader("Content-Type", "text/css");
+        res.setHeader("Content-Type", mindType);
         res.write(data);
         res.end();
       });
