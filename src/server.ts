@@ -9,7 +9,7 @@ import { parse } from "querystring";
 
 const fileServer = new Server(path.join(__dirname, "../public"));
 // const PROJECT_PATH = "/Users/yidoon/Desktop/shifang/crm-fe";
-const PROJECT_PATH = "/Users/abc/Desktop/Project/crm-fe";
+const PROJECT_PATH = "/Users/Yidoon/Desktop/tenclass/crm-fe";
 
 const createServer = () => {
   const server = http.createServer(async (req, res) => {

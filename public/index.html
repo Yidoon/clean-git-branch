@@ -20,11 +20,14 @@
     </div> -->
     <div id="app">
       <div v-scope="{ count: 0 }">
-        {{ count }}
+        {{ count }}{{tableData.length}}
         <button @click="count++">inc</button>
       </div>
     </div>
     <!-- <script src="https://unpkg.com/petite-vue" defer init></script> -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script type="module" src="index.vue.js"></script>
+    <!-- <script src="./index.js"></script> -->
   </body>
 </html>
